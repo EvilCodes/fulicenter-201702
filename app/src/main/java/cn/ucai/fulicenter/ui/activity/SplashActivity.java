@@ -6,6 +6,7 @@ import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
 import cn.ucai.fulicenter.R;
@@ -28,6 +29,17 @@ public class SplashActivity extends AppCompatActivity {
         tvSkip = (TextView) findViewById(R.id.tv_skip);
         cdt = new MyCountDownTimer(time,1000);
         cdt.start();
+        setListener();
+    }
+
+    private void setListener() {
+        tvSkip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cdt.cancel();
+                cdt.onFinish();
+            }
+        });
     }
 
     class MyCountDownTimer extends CountDownTimer{
@@ -53,6 +65,7 @@ public class SplashActivity extends AppCompatActivity {
         public void onFinish() {
             Log.e("MyCountDownTimer","onFinish.....");
             startActivity(new Intent(SplashActivity.this,MainActivity.class));
+            finish();
         }
     }
 }
