@@ -6,9 +6,11 @@ import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
 import android.widget.TextView;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import cn.ucai.fulicenter.R;
 
 /**
@@ -18,31 +20,26 @@ import cn.ucai.fulicenter.R;
 public class SplashActivity extends AppCompatActivity {
 
     private final static int time = 5000;
-    TextView tvSkip;
     MyCountDownTimer cdt;
+    @BindView(R.id.tv_skip)
+    TextView mTvSkip;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-        Log.e("main","onCreate.....");
-        tvSkip = (TextView) findViewById(R.id.tv_skip);
-        cdt = new MyCountDownTimer(time,1000);
+        ButterKnife.bind(this);
+        cdt = new MyCountDownTimer(time, 1000);
         cdt.start();
-        setListener();
     }
 
-    private void setListener() {
-        tvSkip.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                cdt.cancel();
-                cdt.onFinish();
-            }
-        });
+    @OnClick(R.id.tv_skip) void skip(){
+        cdt.cancel();
+        cdt.onFinish();
     }
 
-    class MyCountDownTimer extends CountDownTimer{
+
+    class MyCountDownTimer extends CountDownTimer {
 
         /**
          * @param millisInFuture    The number of millis in the future from the call
@@ -57,14 +54,12 @@ public class SplashActivity extends AppCompatActivity {
 
         @Override
         public void onTick(long millisUntilFinished) {
-            Log.e("MyCountDownTimer","onTick....."+millisUntilFinished);
-            tvSkip.setText(getString(R.string.skip)+" " + millisUntilFinished/1000 + "s");
+            mTvSkip.setText(getString(R.string.skip) + " " + millisUntilFinished / 1000 + "s");
         }
 
         @Override
         public void onFinish() {
-            Log.e("MyCountDownTimer","onFinish.....");
-            startActivity(new Intent(SplashActivity.this,MainActivity.class));
+            startActivity(new Intent(SplashActivity.this, MainActivity.class));
             finish();
         }
     }
