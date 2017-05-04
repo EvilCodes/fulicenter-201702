@@ -42,6 +42,9 @@ public class NewGoodsFragment extends Fragment {
     IGoodsModel model;
     GoodsAdapter adapter;
     GridLayoutManager gm;
+    int catId = I.CAT_ID;
+    int pageId = 1;
+    int pageSize = I.PAGE_SIZE_DEFAULT;
 
     @Nullable
     @Override
@@ -57,15 +60,46 @@ public class NewGoodsFragment extends Fragment {
         model = new GoodsModel();
         gm = new GridLayoutManager(getContext(), I.COLUM_NUM);
         mRvGoods.setLayoutManager(gm);
-        L.e(TAG,"onActivityCreated....");
+        initView();
         loadData();
+        setListener();
     }
+
+    private void initView() {
+        mSrl.setColorSchemeColors(
+                getResources().getColor(R.color.google_blue),
+                getResources().getColor(R.color.google_red),
+                getResources().getColor(R.color.google_green),
+                getResources().getColor(R.color.google_yellow)
+        );
+    }
+
+    private void setListener() {
+        setPullDownListener();
+    }
+
+    private void setPullDownListener() {
+        mSrl.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mSrl.setRefreshing(true);
+                mTvRefresh.setVisibility(View.VISIBLE);
+                pageId=1;
+                loadData();
+            }
+        });
+    }
+
     public void loadData(){
         L.e(TAG,"onActivityCreated....");
-        model.loadNewGoodsData(getContext(), 0, 1, 10,
+        model.loadNewGoodsData(getContext(), catId, pageId, pageSize,
                 new OnCompleteListener<NewGoodsBean[]>() {
                     @Override
                     public void onSuccess(NewGoodsBean[] result) {
+
+                        mSrl.setRefreshing(false);
+                        mTvRefresh.setVisibility(View.GONE);
+
                         L.e("main","result="+result);
                         if (result!=null){
                             ArrayList<NewGoodsBean> list = ResultUtils.array2List(result);
@@ -76,6 +110,8 @@ public class NewGoodsFragment extends Fragment {
                     @Override
                     public void onError(String error) {
                         L.e("main","error="+error);
+                        mSrl.setRefreshing(false);
+                        mTvRefresh.setVisibility(View.GONE);
                     }
                 });
     }
