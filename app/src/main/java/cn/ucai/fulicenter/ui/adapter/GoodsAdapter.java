@@ -14,6 +14,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.ucai.fulicenter.R;
+import cn.ucai.fulicenter.application.I;
 import cn.ucai.fulicenter.data.bean.NewGoodsBean;
 import cn.ucai.fulicenter.data.utils.ImageLoader;
 
@@ -21,7 +22,7 @@ import cn.ucai.fulicenter.data.utils.ImageLoader;
  * Created by clawpo on 2017/5/4.
  */
 
-public class GoodsAdapter extends RecyclerView.Adapter<GoodsAdapter.GoodsViewHolder> {
+public class GoodsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     List<NewGoodsBean> list;
     Context context;
     boolean isMore = true;
@@ -32,16 +33,37 @@ public class GoodsAdapter extends RecyclerView.Adapter<GoodsAdapter.GoodsViewHol
     }
 
     @Override
-    public GoodsAdapter.GoodsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new GoodsViewHolder(View.inflate(context, R.layout.item_goods, null));
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if (viewType==I.TYPE_FOOTER)
+            return new FooterViewHolder(View.inflate(context, R.layout.item_footer, null));
+        else
+            return new GoodsViewHolder(View.inflate(context, R.layout.item_goods, null));
     }
 
     @Override
-    public void onBindViewHolder(GoodsAdapter.GoodsViewHolder holder, int position) {
-        NewGoodsBean bean = list.get(position);
-        holder.mTvGoodsName.setText(bean.getGoodsName());
-        holder.mTvGoodsPrice.setText(bean.getCurrencyPrice());
-        ImageLoader.downloadImg(context,holder.mIvGoodsThumb,bean.getGoodsThumb());
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        if (getItemViewType(position)==I.TYPE_FOOTER){
+            ((FooterViewHolder)holder).mTvFooter.setText(getFooter());
+        }else{
+            NewGoodsBean bean = list.get(position);
+            ((GoodsViewHolder)holder).mTvGoodsName.setText(bean.getGoodsName());
+            ((GoodsViewHolder)holder).mTvGoodsPrice.setText(bean.getCurrencyPrice());
+            ImageLoader.downloadImg(context, ((GoodsViewHolder)holder).mIvGoodsThumb,
+                    bean.getGoodsThumb());
+        }
+
+    }
+
+    private int getFooter() {
+        return isMore?R.string.load_more:R.string.no_more;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if (position==getItemCount()-1)
+            return I.TYPE_FOOTER;
+        else
+            return I.TYPE_ITEM;
     }
 
     public boolean isMore() {
@@ -50,11 +72,12 @@ public class GoodsAdapter extends RecyclerView.Adapter<GoodsAdapter.GoodsViewHol
 
     public void setMore(boolean more) {
         isMore = more;
+        notifyDataSetChanged();
     }
 
     @Override
     public int getItemCount() {
-        return list != null ? list.size() : 0;
+        return list != null ? list.size()+1 : 1;
     }
 
     public void addData(ArrayList<NewGoodsBean> list) {
@@ -73,6 +96,16 @@ public class GoodsAdapter extends RecyclerView.Adapter<GoodsAdapter.GoodsViewHol
         LinearLayout mLayoutGoods;
 
         GoodsViewHolder(View view) {
+            super(view);
+            ButterKnife.bind(this, view);
+        }
+    }
+
+    class FooterViewHolder extends RecyclerView.ViewHolder {
+        @BindView(R.id.tv_footer)
+        TextView mTvFooter;
+
+        FooterViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
         }
