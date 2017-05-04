@@ -76,6 +76,27 @@ public class NewGoodsFragment extends Fragment {
 
     private void setListener() {
         setPullDownListener();
+        setPullUpListener();
+    }
+
+    private void setPullUpListener() {
+        mRvGoods.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                int lastVisibleItemPosition = gm.findLastVisibleItemPosition();
+                if (adapter.getItemCount()-1==lastVisibleItemPosition
+                        && newState == RecyclerView.SCROLL_STATE_IDLE){
+                    pageId++;
+                    loadData();
+                }
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+            }
+        });
     }
 
     private void setPullDownListener() {
@@ -122,6 +143,8 @@ public class NewGoodsFragment extends Fragment {
         if (adapter==null){
             adapter = new GoodsAdapter(list,getContext());
             mRvGoods.setAdapter(adapter);
+        }else{
+            adapter.addData(list);
         }
     }
 }

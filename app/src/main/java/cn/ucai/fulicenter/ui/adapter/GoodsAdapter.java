@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -45,6 +46,11 @@ public class GoodsAdapter extends RecyclerView.Adapter<GoodsAdapter.GoodsViewHol
     @Override
     public int getItemCount() {
         return list != null ? list.size() : 0;
+    }
+
+    public void addData(ArrayList<NewGoodsBean> list) {
+        this.list.addAll(list);
+        notifyDataSetChanged();
     }
 
     class GoodsViewHolder extends RecyclerView.ViewHolder {
