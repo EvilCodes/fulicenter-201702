@@ -127,11 +127,12 @@ public class NewGoodsFragment extends Fragment {
                             ArrayList<NewGoodsBean> list = ResultUtils.array2List(result);
                             updateUI(list);
                         }
-
-                        if (result!=null && result.length==pageSize){
-                            adapter.setMore(true);
-                        }else{
-                            adapter.setMore(false);
+                        if (adapter!=null) {
+                            if (result != null && result.length == pageSize) {
+                                adapter.setMore(true);
+                            } else {
+                                adapter.setMore(false);
+                            }
                         }
                     }
 
