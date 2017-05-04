@@ -86,7 +86,8 @@ public class NewGoodsFragment extends Fragment {
                 super.onScrollStateChanged(recyclerView, newState);
                 int lastVisibleItemPosition = gm.findLastVisibleItemPosition();
                 if (adapter.getItemCount()-1==lastVisibleItemPosition
-                        && newState == RecyclerView.SCROLL_STATE_IDLE){
+                        && newState == RecyclerView.SCROLL_STATE_IDLE
+                        && adapter.isMore()){
                     pageId++;
                     loadData();
                 }
@@ -125,6 +126,12 @@ public class NewGoodsFragment extends Fragment {
                         if (result!=null){
                             ArrayList<NewGoodsBean> list = ResultUtils.array2List(result);
                             updateUI(list);
+                        }
+
+                        if (result!=null && result.length==pageSize){
+                            adapter.setMore(true);
+                        }else{
+                            adapter.setMore(false);
                         }
                     }
 

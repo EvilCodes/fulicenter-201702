@@ -24,6 +24,7 @@ import cn.ucai.fulicenter.data.utils.ImageLoader;
 public class GoodsAdapter extends RecyclerView.Adapter<GoodsAdapter.GoodsViewHolder> {
     List<NewGoodsBean> list;
     Context context;
+    boolean isMore = true;
 
     public GoodsAdapter(List<NewGoodsBean> list, Context context) {
         this.list = list;
@@ -41,6 +42,14 @@ public class GoodsAdapter extends RecyclerView.Adapter<GoodsAdapter.GoodsViewHol
         holder.mTvGoodsName.setText(bean.getGoodsName());
         holder.mTvGoodsPrice.setText(bean.getCurrencyPrice());
         ImageLoader.downloadImg(context,holder.mIvGoodsThumb,bean.getGoodsThumb());
+    }
+
+    public boolean isMore() {
+        return isMore;
+    }
+
+    public void setMore(boolean more) {
+        isMore = more;
     }
 
     @Override
