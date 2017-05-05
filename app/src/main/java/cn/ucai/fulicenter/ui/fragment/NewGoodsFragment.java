@@ -118,12 +118,21 @@ public class NewGoodsFragment extends Fragment {
         mSrl.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                mSrl.setRefreshing(true);
-                mTvRefresh.setVisibility(View.VISIBLE);
+                setLayoutVisibility(true);
                 pageId=1;
                 loadData();
             }
         });
+    }
+
+    void setLayoutVisibility(boolean visibility){
+        mSrl.setRefreshing(visibility);
+        mTvRefresh.setVisibility(visibility?View.VISIBLE:View.GONE);
+    }
+
+    void setListVisibility(boolean visibility){
+        mTvNomore.setVisibility(visibility?View.GONE:View.VISIBLE);
+        mSrl.setVisibility(visibility?View.VISIBLE:View.GONE);
     }
 
     public void loadData(){
@@ -132,10 +141,8 @@ public class NewGoodsFragment extends Fragment {
                     @Override
                     public void onSuccess(NewGoodsBean[] result) {
                         pd.dismiss();
-                        mSrl.setRefreshing(false);
-                        mTvRefresh.setVisibility(View.GONE);
-                        mTvNomore.setVisibility(View.GONE);
-                        mSrl.setVisibility(View.VISIBLE);
+                        setLayoutVisibility(false);
+                        setListVisibility(true);
 
                         L.e("main","result="+result);
                         if (result!=null){
@@ -143,8 +150,7 @@ public class NewGoodsFragment extends Fragment {
                             updateUI(list);
                         }else{
                             if (adapter==null || adapter.getItemCount()==1){
-                                mTvNomore.setVisibility(View.VISIBLE);
-                                mSrl.setVisibility(View.GONE);
+                                setListVisibility(false);
                             }
                         }
                         if (adapter!=null) {
@@ -160,12 +166,10 @@ public class NewGoodsFragment extends Fragment {
                     public void onError(String error) {
                         L.e("main","error="+error);
                         pd.dismiss();
-                        mSrl.setRefreshing(false);
-                        mTvRefresh.setVisibility(View.GONE);
+                        setLayoutVisibility(false);
                         L.e(TAG,"adapter="+adapter);
                         if (adapter==null || adapter.getItemCount()==1){
-                            mTvNomore.setVisibility(View.VISIBLE);
-                            mSrl.setVisibility(View.GONE);
+                            setListVisibility(false);
                         }
                     }
                 });
