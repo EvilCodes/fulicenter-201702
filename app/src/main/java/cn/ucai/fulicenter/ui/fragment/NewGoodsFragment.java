@@ -66,6 +66,16 @@ public class NewGoodsFragment extends Fragment {
 
         model = new GoodsModel();
         gm = new GridLayoutManager(getContext(), I.COLUM_NUM);
+        gm.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+//                L.e(TAG,"getSpanSize="+position);
+                if (adapter==null || position==adapter.getItemCount()-1){
+                    return I.COLUM_NUM;
+                }
+                return 1;
+            }
+        });
         mRvGoods.setLayoutManager(gm);
         initView();
         loadData();
