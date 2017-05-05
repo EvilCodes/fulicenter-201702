@@ -15,6 +15,7 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import cn.ucai.fulicenter.R;
 import cn.ucai.fulicenter.application.I;
 import cn.ucai.fulicenter.data.bean.NewGoodsBean;
@@ -45,12 +46,13 @@ public class NewGoodsFragment extends Fragment {
     int catId = I.CAT_ID;
     int pageId = 1;
     int pageSize = I.PAGE_SIZE_DEFAULT;
+    Unbinder bind;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_newgoods, null);
-        ButterKnife.bind(this, view);
+        bind = ButterKnife.bind(this, view);
         return view;
     }
 
@@ -153,6 +155,14 @@ public class NewGoodsFragment extends Fragment {
             mRvGoods.setAdapter(adapter);
         }else{
             adapter.addData(list);
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (bind!=null){
+            bind.unbind();
         }
     }
 }

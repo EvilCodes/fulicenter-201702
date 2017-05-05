@@ -5,12 +5,12 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.TextView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 import cn.ucai.fulicenter.R;
 
 /**
@@ -23,12 +23,13 @@ public class SplashActivity extends AppCompatActivity {
     MyCountDownTimer cdt;
     @BindView(R.id.tv_skip)
     TextView mTvSkip;
+    Unbinder bind;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-        ButterKnife.bind(this);
+        bind = ButterKnife.bind(this);
         cdt = new MyCountDownTimer(time, 1000);
         cdt.start();
     }
@@ -61,6 +62,14 @@ public class SplashActivity extends AppCompatActivity {
         public void onFinish() {
             startActivity(new Intent(SplashActivity.this, MainActivity.class));
             finish();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (bind!=null){
+            bind.unbind();
         }
     }
 }
