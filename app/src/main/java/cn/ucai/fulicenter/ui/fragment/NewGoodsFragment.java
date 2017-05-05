@@ -200,7 +200,11 @@ public class NewGoodsFragment extends Fragment {
             adapter = new GoodsAdapter(list,getContext());
             mRvGoods.setAdapter(adapter);
         }else{
-            adapter.addData(list);
+            if (pageId==1){
+                adapter.initData(list);
+            }else {
+                adapter.addData(list);
+            }
         }
     }
 

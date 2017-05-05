@@ -85,6 +85,13 @@ public class GoodsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         notifyDataSetChanged();
     }
 
+    public void initData(ArrayList<NewGoodsBean> list) {
+        if (this.list!=null){
+            list.clear();
+        }
+        addData(list);
+    }
+
     class GoodsViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.ivGoodsThumb)
         ImageView mIvGoodsThumb;
