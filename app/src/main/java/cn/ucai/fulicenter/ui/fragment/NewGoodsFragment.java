@@ -1,5 +1,6 @@
 package cn.ucai.fulicenter.ui.fragment;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -47,6 +48,7 @@ public class NewGoodsFragment extends Fragment {
     int pageId = 1;
     int pageSize = I.PAGE_SIZE_DEFAULT;
     Unbinder bind;
+    ProgressDialog pd;
 
     @Nullable
     @Override
@@ -59,12 +61,20 @@ public class NewGoodsFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        initDialog();
+
         model = new GoodsModel();
         gm = new GridLayoutManager(getContext(), I.COLUM_NUM);
         mRvGoods.setLayoutManager(gm);
         initView();
         loadData();
         setListener();
+    }
+
+    private void initDialog() {
+        pd = new ProgressDialog(getContext());
+        pd.setMessage(getString(R.string.load_more));
+        pd.show();
     }
 
     private void initView() {
@@ -87,7 +97,8 @@ public class NewGoodsFragment extends Fragment {
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 int lastVisibleItemPosition = gm.findLastVisibleItemPosition();
-                if (adapter.getItemCount()-1==lastVisibleItemPosition
+                if (adapter!=null
+                        && adapter.getItemCount()-1==lastVisibleItemPosition
                         && newState == RecyclerView.SCROLL_STATE_IDLE
                         && adapter.isMore()){
                     pageId++;
@@ -115,12 +126,11 @@ public class NewGoodsFragment extends Fragment {
     }
 
     public void loadData(){
-        L.e(TAG,"onActivityCreated....");
         model.loadNewGoodsData(getContext(), catId, pageId, pageSize,
                 new OnCompleteListener<NewGoodsBean[]>() {
                     @Override
                     public void onSuccess(NewGoodsBean[] result) {
-
+                        pd.dismiss();
                         mSrl.setRefreshing(false);
                         mTvRefresh.setVisibility(View.GONE);
 
@@ -141,6 +151,7 @@ public class NewGoodsFragment extends Fragment {
                     @Override
                     public void onError(String error) {
                         L.e("main","error="+error);
+                        pd.dismiss();
                         mSrl.setRefreshing(false);
                         mTvRefresh.setVisibility(View.GONE);
                     }
