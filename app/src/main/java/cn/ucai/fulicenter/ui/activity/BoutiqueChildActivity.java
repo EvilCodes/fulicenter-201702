@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import butterknife.Unbinder;
 import cn.ucai.fulicenter.R;
 import cn.ucai.fulicenter.application.I;
@@ -33,9 +34,16 @@ public class BoutiqueChildActivity extends AppCompatActivity {
         setContentView(R.layout.activity_boutique_child);
         bind = ButterKnife.bind(this);
         int catId = getIntent().getIntExtra(I.NewAndBoutiqueGoods.CAT_ID,I.CAT_ID);
+        String title = getIntent().getStringExtra(I.Boutique.TITLE);
+        mTvCommonTitle.setText(title);
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.fragment_container,new NewGoodsFragment(catId))
                 .commit();
+    }
+
+    @OnClick(R.id.backClickArea)
+    public void onAreaClick(){
+        finish();
     }
 
     @Override
