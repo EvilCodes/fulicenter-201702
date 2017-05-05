@@ -34,10 +34,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void showFragment() {
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.fragment_container,mNewGoodsFragment)
-                .add(R.id.fragment_container,mBoutiqueFragment)
-                .show(mNewGoodsFragment)
-                .hide(mBoutiqueFragment)
+                .add(R.id.fragment_container,mFragments[0])
+                .add(R.id.fragment_container,mFragments[1])
+                .show(mFragments[0])
+                .hide(mFragments[1])
                 .commit();
     }
 

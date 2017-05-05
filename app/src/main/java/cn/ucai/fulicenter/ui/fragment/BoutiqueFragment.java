@@ -1,9 +1,11 @@
 package cn.ucai.fulicenter.ui.fragment;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +16,8 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.Unbinder;
 import cn.ucai.fulicenter.R;
 import cn.ucai.fulicenter.data.bean.BoutiqueBean;
 import cn.ucai.fulicenter.data.net.GoodsModel;
@@ -21,6 +25,8 @@ import cn.ucai.fulicenter.data.net.IGoodsModel;
 import cn.ucai.fulicenter.data.net.OnCompleteListener;
 import cn.ucai.fulicenter.data.utils.L;
 import cn.ucai.fulicenter.data.utils.ResultUtils;
+import cn.ucai.fulicenter.ui.adapter.BoutiqueAdapter;
+import cn.ucai.fulicenter.ui.view.SpaceItemDecoration;
 
 /**
  * Created by clawpo on 2017/5/5.
@@ -37,12 +43,16 @@ public class BoutiqueFragment extends Fragment {
     @BindView(R.id.tv_nomore)
     TextView mTvNomore;
     IGoodsModel model;
+    Unbinder bind;
+    ProgressDialog pd;
+    BoutiqueAdapter adapter;
+    LinearLayoutManager llm;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_newgoods, null);
-        ButterKnife.bind(this, view);
+        bind = ButterKnife.bind(this, view);
         return view;
     }
 
@@ -50,24 +60,109 @@ public class BoutiqueFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         model = new GoodsModel();
+        initDialog();
+        initView();
         loadData();
+        setListener();
     }
 
     private void loadData() {
         model.loadBoutiqueData(getContext(), new OnCompleteListener<BoutiqueBean[]>() {
             @Override
             public void onSuccess(BoutiqueBean[] result) {
+                pd.dismiss();
+                setLayoutVisibility(false);
+                setListVisibility(true);
                 L.e(TAG,"result="+result);
+
                 if (result!=null){
-                    L.e(TAG,"result.length="+result.length);
                     ArrayList<BoutiqueBean> list = ResultUtils.array2List(result);
+                    updateUI(list);
+                }else{
+                    if (adapter==null || adapter.getItemCount()==1){
+                        setListVisibility(false);
+                    }
                 }
             }
 
             @Override
             public void onError(String error) {
-
+                L.e("main","error="+error);
+                pd.dismiss();
+                setLayoutVisibility(false);
+                L.e(TAG,"adapter="+adapter);
+                if (adapter==null || adapter.getItemCount()==1){
+                    setListVisibility(false);
+                }
             }
         });
+    }
+
+
+    private void initDialog() {
+        pd = new ProgressDialog(getContext());
+        pd.setMessage(getString(R.string.load_more));
+        pd.show();
+    }
+
+    private void initView() {
+        llm = new LinearLayoutManager(getContext());
+        mRvGoods.setLayoutManager(llm);
+        mSrl.setColorSchemeColors(
+                getResources().getColor(R.color.google_blue),
+                getResources().getColor(R.color.google_red),
+                getResources().getColor(R.color.google_green),
+                getResources().getColor(R.color.google_yellow)
+        );
+        mRvGoods.addItemDecoration(new SpaceItemDecoration(12));
+    }
+
+    private void setListener() {
+        setPullDownListener();
+    }
+
+    private void setPullDownListener() {
+        mSrl.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                setLayoutVisibility(true);
+                loadData();
+            }
+        });
+    }
+
+    void setLayoutVisibility(boolean visibility){
+        mSrl.setRefreshing(visibility);
+        mTvRefresh.setVisibility(visibility?View.VISIBLE:View.GONE);
+    }
+
+    void setListVisibility(boolean visibility){
+        mTvNomore.setVisibility(visibility?View.GONE:View.VISIBLE);
+        mSrl.setVisibility(visibility?View.VISIBLE:View.GONE);
+    }
+
+    @OnClick(R.id.tv_nomore)
+    public void reloadData(){
+        pd.show();
+        loadData();
+    }
+
+    private void updateUI(ArrayList<BoutiqueBean> list) {
+        L.e(TAG,"updateUI....list="+list);
+        L.e(TAG,"updateUI....adapter="+adapter);
+        if (adapter==null){
+            adapter = new BoutiqueAdapter(list,getContext());
+            mRvGoods.setAdapter(adapter);
+        }else{
+            adapter.initData(list);
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (bind!=null){
+            bind.unbind();
+        }
     }
 }
