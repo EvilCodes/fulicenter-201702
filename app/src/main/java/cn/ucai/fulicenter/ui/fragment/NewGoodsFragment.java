@@ -52,6 +52,15 @@ public class NewGoodsFragment extends Fragment {
     Unbinder bind;
     ProgressDialog pd;
 
+    public NewGoodsFragment(){
+
+    }
+
+    public NewGoodsFragment(int catId) {
+        L.e(TAG,"NewGoodsFragment,catid="+catId);
+        this.catId = catId;
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -148,6 +157,7 @@ public class NewGoodsFragment extends Fragment {
     }
 
     public void loadData(){
+        L.e(TAG,"NewGoodsFragment,catid="+catId);
         model.loadNewGoodsData(getContext(), catId, pageId, pageSize,
                 new OnCompleteListener<NewGoodsBean[]>() {
                     @Override

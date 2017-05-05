@@ -11,6 +11,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import cn.ucai.fulicenter.R;
+import cn.ucai.fulicenter.application.I;
 import cn.ucai.fulicenter.ui.fragment.NewGoodsFragment;
 
 /**
@@ -31,8 +32,9 @@ public class BoutiqueChildActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_boutique_child);
         bind = ButterKnife.bind(this);
+        int catId = getIntent().getIntExtra(I.NewAndBoutiqueGoods.CAT_ID,I.CAT_ID);
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.fragment_container,new NewGoodsFragment())
+                .add(R.id.fragment_container,new NewGoodsFragment(catId))
                 .commit();
     }
 
