@@ -27,6 +27,7 @@ import cn.ucai.fulicenter.data.net.OnCompleteListener;
 import cn.ucai.fulicenter.data.utils.L;
 import cn.ucai.fulicenter.data.utils.ResultUtils;
 import cn.ucai.fulicenter.ui.adapter.GoodsAdapter;
+import cn.ucai.fulicenter.ui.view.SpaceItemDecoration;
 
 /**
  * Created by clawpo on 2017/5/4.
@@ -65,18 +66,6 @@ public class NewGoodsFragment extends Fragment {
         initDialog();
 
         model = new GoodsModel();
-        gm = new GridLayoutManager(getContext(), I.COLUM_NUM);
-        gm.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-            @Override
-            public int getSpanSize(int position) {
-//                L.e(TAG,"getSpanSize="+position);
-                if (adapter==null || position==adapter.getItemCount()-1){
-                    return I.COLUM_NUM;
-                }
-                return 1;
-            }
-        });
-        mRvGoods.setLayoutManager(gm);
         initView();
         loadData();
         setListener();
@@ -89,12 +78,25 @@ public class NewGoodsFragment extends Fragment {
     }
 
     private void initView() {
+        gm = new GridLayoutManager(getContext(), I.COLUM_NUM);
+        gm.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+//                L.e(TAG,"getSpanSize="+position);
+                if (adapter==null || position==adapter.getItemCount()-1){
+                    return I.COLUM_NUM;
+                }
+                return 1;
+            }
+        });
+        mRvGoods.setLayoutManager(gm);
         mSrl.setColorSchemeColors(
                 getResources().getColor(R.color.google_blue),
                 getResources().getColor(R.color.google_red),
                 getResources().getColor(R.color.google_green),
                 getResources().getColor(R.color.google_yellow)
         );
+        mRvGoods.addItemDecoration(new SpaceItemDecoration(12));
     }
 
     private void setListener() {
@@ -187,6 +189,7 @@ public class NewGoodsFragment extends Fragment {
 
     @OnClick(R.id.tv_nomore)
     public void reloadData(){
+        pd.show();
         loadData();
     }
 
