@@ -16,6 +16,7 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import butterknife.Unbinder;
 import cn.ucai.fulicenter.R;
 import cn.ucai.fulicenter.application.I;
@@ -133,11 +134,18 @@ public class NewGoodsFragment extends Fragment {
                         pd.dismiss();
                         mSrl.setRefreshing(false);
                         mTvRefresh.setVisibility(View.GONE);
+                        mTvNomore.setVisibility(View.GONE);
+                        mSrl.setVisibility(View.VISIBLE);
 
                         L.e("main","result="+result);
                         if (result!=null){
                             ArrayList<NewGoodsBean> list = ResultUtils.array2List(result);
                             updateUI(list);
+                        }else{
+                            if (adapter==null || adapter.getItemCount()==1){
+                                mTvNomore.setVisibility(View.VISIBLE);
+                                mSrl.setVisibility(View.GONE);
+                            }
                         }
                         if (adapter!=null) {
                             if (result != null && result.length == pageSize) {
@@ -154,8 +162,18 @@ public class NewGoodsFragment extends Fragment {
                         pd.dismiss();
                         mSrl.setRefreshing(false);
                         mTvRefresh.setVisibility(View.GONE);
+                        L.e(TAG,"adapter="+adapter);
+                        if (adapter==null || adapter.getItemCount()==1){
+                            mTvNomore.setVisibility(View.VISIBLE);
+                            mSrl.setVisibility(View.GONE);
+                        }
                     }
                 });
+    }
+
+    @OnClick(R.id.tv_nomore)
+    public void reloadData(){
+        loadData();
     }
 
     private void updateUI(ArrayList<NewGoodsBean> list) {
