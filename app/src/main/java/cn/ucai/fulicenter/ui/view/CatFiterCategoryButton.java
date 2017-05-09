@@ -5,7 +5,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.Button;
 import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -21,7 +20,7 @@ import cn.ucai.fulicenter.ui.adapter.CatFiterAdapter;
  * Created by clawpo on 2017/5/9.
  */
 
-public class CatFiterCategoryButton extends Button {
+public class CatFiterCategoryButton extends android.support.v7.widget.AppCompatButton {
     PopupWindow mPopupWindow;
     Context context;
     boolean isExpan = false;
