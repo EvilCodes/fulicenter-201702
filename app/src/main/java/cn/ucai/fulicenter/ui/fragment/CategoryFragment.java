@@ -42,7 +42,7 @@ public class CategoryFragment extends Fragment {
     ProgressDialog pd;
     CategoryAdapter adapter;
     ArrayList<CategoryGroupBean> groupList = new ArrayList<>();
-    List<List<CategoryChildBean>> childList = new ArrayList<>();
+    List<ArrayList<CategoryChildBean>> childList = new ArrayList<>();
     int groupCount = 0;
     @BindView(R.id.elv_category)
     ExpandableListView mElvCategory;

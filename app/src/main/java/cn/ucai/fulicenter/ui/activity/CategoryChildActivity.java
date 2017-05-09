@@ -7,12 +7,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 
+import java.util.ArrayList;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import cn.ucai.fulicenter.R;
 import cn.ucai.fulicenter.application.I;
+import cn.ucai.fulicenter.data.bean.CategoryChildBean;
 import cn.ucai.fulicenter.ui.fragment.NewGoodsFragment;
 import cn.ucai.fulicenter.ui.view.CatFiterCategoryButton;
 
@@ -42,14 +45,20 @@ public class CategoryChildActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.fragment_container, fragment)
                 .commit();
+        String groupName = getIntent().getStringExtra(I.CategoryGroup.NAME);
+        ArrayList<CategoryChildBean> list = (ArrayList<CategoryChildBean>) getIntent().getSerializableExtra(I.CategoryChild.ID);
+        mCatFilter.initView(groupName,list);
     }
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         if (bind != null) {
             bind.unbind();
         }
+        if (mCatFilter!=null){
+            mCatFilter.release();
+        }
+        super.onDestroy();
     }
 
     @OnClick({R.id.btn_sort_price, R.id.btn_sort_addtime})
