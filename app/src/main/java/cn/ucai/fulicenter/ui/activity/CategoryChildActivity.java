@@ -3,8 +3,10 @@ package cn.ucai.fulicenter.ui.activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import butterknife.Unbinder;
 import cn.ucai.fulicenter.R;
 import cn.ucai.fulicenter.application.I;
@@ -16,22 +18,42 @@ import cn.ucai.fulicenter.ui.fragment.NewGoodsFragment;
 
 public class CategoryChildActivity extends AppCompatActivity {
     Unbinder bind;
+    NewGoodsFragment fragment;
+    boolean priceAsc, addTimeAsc;
+    int sortBy = I.SORT_BY_ADDTIME_DESC;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category_child);
         bind = ButterKnife.bind(this);
-        int catId = getIntent().getIntExtra(I.CategoryChild.CAT_ID,I.CAT_ID);
+        int catId = getIntent().getIntExtra(I.CategoryChild.CAT_ID, I.CAT_ID);
+        fragment = new NewGoodsFragment(catId);
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.fragment_container,new NewGoodsFragment(catId))
+                .add(R.id.fragment_container, fragment)
                 .commit();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (bind!=null){
+        if (bind != null) {
             bind.unbind();
         }
+    }
+
+    @OnClick({R.id.btn_sort_price, R.id.btn_sort_addtime})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.btn_sort_price:
+                priceAsc = !priceAsc;
+                sortBy = priceAsc?I.SORT_BY_PRICE_ASC:I.SORT_BY_PRICE_DESC;
+                break;
+            case R.id.btn_sort_addtime:
+                addTimeAsc = !addTimeAsc;
+                sortBy = addTimeAsc?I.SORT_BY_ADDTIME_ASC:I.SORT_BY_ADDTIME_DESC;
+                break;
+        }
+        fragment.sortGoods(sortBy);
     }
 }

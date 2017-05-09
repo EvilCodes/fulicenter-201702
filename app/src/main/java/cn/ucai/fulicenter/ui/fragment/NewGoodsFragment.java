@@ -225,4 +225,10 @@ public class NewGoodsFragment extends Fragment {
             bind.unbind();
         }
     }
+
+    public void sortGoods(int sortBy){
+        if (adapter!=null){
+            adapter.sortGoods(sortBy);
+        }
+    }
 }
