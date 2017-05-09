@@ -80,7 +80,7 @@ public class CategoryAdapter extends BaseExpandableListAdapter {
             holder = (GroupViewHolder) convertView.getTag();
         }
         holder.bind(groupPosition,isExpanded);
-        return null;
+        return convertView;
     }
 
     @Override
@@ -94,7 +94,7 @@ public class CategoryAdapter extends BaseExpandableListAdapter {
             holder = (ChildViewHolder) convertView.getTag();
         }
         holder.bind(groupPosition,childPosition);
-        return null;
+        return convertView;
     }
 
     @Override
