@@ -1,10 +1,13 @@
 package cn.ucai.fulicenter.ui.activity;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Button;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
@@ -21,6 +24,10 @@ public class CategoryChildActivity extends AppCompatActivity {
     NewGoodsFragment fragment;
     boolean priceAsc, addTimeAsc;
     int sortBy = I.SORT_BY_ADDTIME_DESC;
+    @BindView(R.id.btn_sort_price)
+    Button mBtnSortPrice;
+    @BindView(R.id.btn_sort_addtime)
+    Button mBtnSortAddtime;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -44,14 +51,19 @@ public class CategoryChildActivity extends AppCompatActivity {
 
     @OnClick({R.id.btn_sort_price, R.id.btn_sort_addtime})
     public void onClick(View view) {
+        Drawable end;
         switch (view.getId()) {
             case R.id.btn_sort_price:
                 priceAsc = !priceAsc;
-                sortBy = priceAsc?I.SORT_BY_PRICE_ASC:I.SORT_BY_PRICE_DESC;
+                sortBy = priceAsc ? I.SORT_BY_PRICE_ASC : I.SORT_BY_PRICE_DESC;
+                end = getDrawable(priceAsc?R.drawable.arrow_order_up:R.drawable.arrow_order_down);
+                mBtnSortPrice.setCompoundDrawablesRelativeWithIntrinsicBounds(null,null,end,null);
                 break;
             case R.id.btn_sort_addtime:
                 addTimeAsc = !addTimeAsc;
-                sortBy = addTimeAsc?I.SORT_BY_ADDTIME_ASC:I.SORT_BY_ADDTIME_DESC;
+                sortBy = addTimeAsc ? I.SORT_BY_ADDTIME_ASC : I.SORT_BY_ADDTIME_DESC;
+                end = getDrawable(addTimeAsc?R.drawable.arrow_order_up:R.drawable.arrow_order_down);
+                mBtnSortAddtime.setCompoundDrawablesRelativeWithIntrinsicBounds(null,null,end,null);
                 break;
         }
         fragment.sortGoods(sortBy);
