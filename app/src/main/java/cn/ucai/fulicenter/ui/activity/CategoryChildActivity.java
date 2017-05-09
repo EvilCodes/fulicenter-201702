@@ -14,6 +14,7 @@ import butterknife.Unbinder;
 import cn.ucai.fulicenter.R;
 import cn.ucai.fulicenter.application.I;
 import cn.ucai.fulicenter.ui.fragment.NewGoodsFragment;
+import cn.ucai.fulicenter.ui.view.CatFiterCategoryButton;
 
 /**
  * Created by clawpo on 2017/5/9.
@@ -28,6 +29,8 @@ public class CategoryChildActivity extends AppCompatActivity {
     Button mBtnSortPrice;
     @BindView(R.id.btn_sort_addtime)
     Button mBtnSortAddtime;
+    @BindView(R.id.cat_filter)
+    CatFiterCategoryButton mCatFilter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -56,14 +59,14 @@ public class CategoryChildActivity extends AppCompatActivity {
             case R.id.btn_sort_price:
                 priceAsc = !priceAsc;
                 sortBy = priceAsc ? I.SORT_BY_PRICE_ASC : I.SORT_BY_PRICE_DESC;
-                end = getDrawable(priceAsc?R.drawable.arrow_order_up:R.drawable.arrow_order_down);
-                mBtnSortPrice.setCompoundDrawablesRelativeWithIntrinsicBounds(null,null,end,null);
+                end = getDrawable(priceAsc ? R.drawable.arrow_order_up : R.drawable.arrow_order_down);
+                mBtnSortPrice.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, end, null);
                 break;
             case R.id.btn_sort_addtime:
                 addTimeAsc = !addTimeAsc;
                 sortBy = addTimeAsc ? I.SORT_BY_ADDTIME_ASC : I.SORT_BY_ADDTIME_DESC;
-                end = getDrawable(addTimeAsc?R.drawable.arrow_order_up:R.drawable.arrow_order_down);
-                mBtnSortAddtime.setCompoundDrawablesRelativeWithIntrinsicBounds(null,null,end,null);
+                end = getDrawable(addTimeAsc ? R.drawable.arrow_order_up : R.drawable.arrow_order_down);
+                mBtnSortAddtime.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, end, null);
                 break;
         }
         fragment.sortGoods(sortBy);
