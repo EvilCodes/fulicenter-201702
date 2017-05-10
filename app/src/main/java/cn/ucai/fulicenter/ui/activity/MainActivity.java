@@ -1,5 +1,6 @@
 package cn.ucai.fulicenter.ui.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -7,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import cn.ucai.fulicenter.R;
+import cn.ucai.fulicenter.application.FuLiCenterApplication;
 import cn.ucai.fulicenter.ui.fragment.BoutiqueFragment;
 import cn.ucai.fulicenter.ui.fragment.CategoryFragment;
 import cn.ucai.fulicenter.ui.fragment.NewGoodsFragment;
@@ -57,6 +59,13 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.layout_category:
                 index = 2;
+                break;
+            case R.id.layout_personal_center:
+                if (FuLiCenterApplication.getInstance().getCurrentUser()==null){
+                    startActivity(new Intent(MainActivity.this,LoginActivity.class));
+                }else {
+                    index = 4;
+                }
                 break;
         }
         setFragment();
