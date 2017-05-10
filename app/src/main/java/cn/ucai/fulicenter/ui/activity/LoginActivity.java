@@ -17,6 +17,7 @@ import cn.ucai.fulicenter.application.FuLiCenterApplication;
 import cn.ucai.fulicenter.application.I;
 import cn.ucai.fulicenter.data.bean.Result;
 import cn.ucai.fulicenter.data.bean.User;
+import cn.ucai.fulicenter.data.local.UserDao;
 import cn.ucai.fulicenter.data.net.IUserModel;
 import cn.ucai.fulicenter.data.net.OnCompleteListener;
 import cn.ucai.fulicenter.data.net.UserModel;
@@ -107,6 +108,8 @@ public class LoginActivity extends AppCompatActivity {
         L.e(TAG,"user="+user);
         FuLiCenterApplication.getInstance().setCurrentUser(user);
         SharePrefrenceUtils.getInstance().setUserName(username);
+        UserDao dao = new UserDao(LoginActivity.this);
+        dao.saveUser(user);
         finish();
     }
 
