@@ -20,14 +20,17 @@ import cn.ucai.fulicenter.data.bean.User;
 import cn.ucai.fulicenter.data.net.IUserModel;
 import cn.ucai.fulicenter.data.net.OnCompleteListener;
 import cn.ucai.fulicenter.data.net.UserModel;
+import cn.ucai.fulicenter.data.utils.L;
 import cn.ucai.fulicenter.data.utils.MD5;
 import cn.ucai.fulicenter.data.utils.ResultUtils;
+import cn.ucai.fulicenter.data.utils.SharePrefrenceUtils;
 
 /**
  * Created by clawpo on 2017/5/10.
  */
 
 public class LoginActivity extends AppCompatActivity {
+    private static final String TAG = "LoginActivity";
     @BindView(R.id.username)
     EditText mUsername;
     @BindView(R.id.password)
@@ -101,7 +104,9 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void loginSuccess(User user) {
+        L.e(TAG,"user="+user);
         FuLiCenterApplication.getInstance().setCurrentUser(user);
+        SharePrefrenceUtils.getInstance().setUserName(username);
         finish();
     }
 
