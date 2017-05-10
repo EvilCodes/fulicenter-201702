@@ -61,7 +61,7 @@ public class CategoryChildActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-    @OnClick({R.id.btn_sort_price, R.id.btn_sort_addtime})
+    @OnClick({R.id.btn_sort_price, R.id.btn_sort_addtime, R.id.backClickArea})
     public void onClick(View view) {
         Drawable end;
         switch (view.getId()) {
@@ -76,6 +76,9 @@ public class CategoryChildActivity extends AppCompatActivity {
                 sortBy = addTimeAsc ? I.SORT_BY_ADDTIME_ASC : I.SORT_BY_ADDTIME_DESC;
                 end = getDrawable(addTimeAsc ? R.drawable.arrow_order_up : R.drawable.arrow_order_down);
                 mBtnSortAddtime.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, end, null);
+                break;
+            case R.id.backClickArea:
+                finish();
                 break;
         }
         fragment.sortGoods(sortBy);

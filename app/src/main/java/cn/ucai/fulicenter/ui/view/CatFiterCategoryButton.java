@@ -9,7 +9,7 @@ import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import cn.ucai.fulicenter.R;
 import cn.ucai.fulicenter.data.bean.CategoryChildBean;
@@ -70,13 +70,13 @@ public class CatFiterCategoryButton extends android.support.v7.widget.AppCompatB
         mPopupWindow.showAsDropDown(this);
     }
 
-    public void initView(String groupName, List<CategoryChildBean> list){
+    public void initView(String groupName, ArrayList<CategoryChildBean> list){
         if (groupName==null || list==null || list.size()==0){
             CommonUtils.showLongToast("数据获取异常，请重试！");
             return;
         }
         this.setText(groupName);
-        adapter = new CatFiterAdapter(context,list);
+        adapter = new CatFiterAdapter(context,list,groupName);
         gv = new GridView(context);
         gv.setNumColumns(GridView.AUTO_FIT);
         gv.setHorizontalSpacing(10);

@@ -1,6 +1,7 @@
 package cn.ucai.fulicenter.ui.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -8,13 +9,15 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.ucai.fulicenter.R;
+import cn.ucai.fulicenter.application.I;
 import cn.ucai.fulicenter.data.bean.CategoryChildBean;
 import cn.ucai.fulicenter.data.utils.ImageLoader;
+import cn.ucai.fulicenter.ui.activity.CategoryChildActivity;
 
 /**
  * Created by clawpo on 2017/5/9.
@@ -22,11 +25,13 @@ import cn.ucai.fulicenter.data.utils.ImageLoader;
 
 public class CatFiterAdapter extends BaseAdapter {
     Context context;
-    List<CategoryChildBean> list;
+    ArrayList<CategoryChildBean> list;
+    String groupName;
 
-    public CatFiterAdapter(Context context, List<CategoryChildBean> list) {
+    public CatFiterAdapter(Context context, ArrayList<CategoryChildBean> list,String groupName) {
         this.context = context;
         this.list = list;
+        this.groupName = groupName;
     }
 
     @Override
@@ -71,9 +76,19 @@ public class CatFiterAdapter extends BaseAdapter {
         }
 
         public void bind(int position) {
-            CategoryChildBean bean = list.get(position);
+            final CategoryChildBean bean = list.get(position);
             ImageLoader.downloadImg(context,mIvCategoryChildThumb,bean.getImageUrl());
             mTvCategoryChildName.setText(bean.getName());
+            mLayoutCategoryChild.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    context.startActivity(new Intent(context,CategoryChildActivity.class)
+                            .putExtra(I.CategoryChild.CAT_ID,bean.getId())
+                            .putExtra(I.CategoryGroup.NAME,groupName)
+                            .putExtra(I.CategoryChild.ID,list));
+                    ((CategoryChildActivity)context).finish();
+                }
+            });
         }
     }
 }

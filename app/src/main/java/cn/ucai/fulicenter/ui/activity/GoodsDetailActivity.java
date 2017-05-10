@@ -135,5 +135,6 @@ public class GoodsDetailActivity extends AppCompatActivity {
 
     @OnClick(R.id.backClickArea)
     public void onClick() {
+        finish();
     }
 }
