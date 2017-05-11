@@ -112,6 +112,7 @@ public class LoginActivity extends AppCompatActivity {
         SharePrefrenceUtils.getInstance().setUserName(username);
         UserDao dao = new UserDao(LoginActivity.this);
         dao.saveUser(user);
+        setResult(RESULT_OK);
         finish();
     }
 

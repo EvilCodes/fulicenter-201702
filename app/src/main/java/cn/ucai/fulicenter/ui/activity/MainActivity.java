@@ -12,12 +12,15 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.ucai.fulicenter.R;
 import cn.ucai.fulicenter.application.FuLiCenterApplication;
+import cn.ucai.fulicenter.application.I;
+import cn.ucai.fulicenter.data.utils.L;
 import cn.ucai.fulicenter.ui.fragment.BoutiqueFragment;
 import cn.ucai.fulicenter.ui.fragment.CategoryFragment;
 import cn.ucai.fulicenter.ui.fragment.NewGoodsFragment;
 import cn.ucai.fulicenter.ui.fragment.PersonalFragment;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "MainActivity";
     NewGoodsFragment mNewGoodsFragment;
     BoutiqueFragment mBoutiqueFragment;
     CategoryFragment mCategoryFragment;
@@ -91,7 +94,8 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.layout_personal_center:
                 if (FuLiCenterApplication.getInstance().getCurrentUser() == null) {
-                    startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                    startActivityForResult(new Intent(MainActivity.this, LoginActivity.class),
+                            I.REQUEST_CODE_LOGIN);
                 } else {
                     index = 4;
                 }
@@ -117,6 +121,16 @@ public class MainActivity extends AppCompatActivity {
     private void setRedioButton() {
         for (int i = 0; i < mRadioButtons.length; i++) {
             mRadioButtons[i].setChecked(i==index?true:false);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        L.e(TAG,"onActivityResult,requestCode="+requestCode+",resultCode="+resultCode);
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK && requestCode == I.REQUEST_CODE_LOGIN){
+            index = 4;
+            setFragment();
         }
     }
 }
