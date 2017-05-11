@@ -47,7 +47,7 @@ public class LoginActivity extends AppCompatActivity {
         ButterKnife.bind(this);
     }
 
-    @OnClick({R.id.btn_login, R.id.btn_register})
+    @OnClick({R.id.btn_login, R.id.btn_register, R.id.backClickArea})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_login:
@@ -56,6 +56,8 @@ public class LoginActivity extends AppCompatActivity {
             case R.id.btn_register:
                 startActivityForResult(new Intent(LoginActivity.this, RegisterActivity.class), 0);
                 break;
+            case R.id.backClickArea:
+                finish();
         }
     }
 

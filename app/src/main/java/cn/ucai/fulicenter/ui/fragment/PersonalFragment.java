@@ -1,5 +1,6 @@
 package cn.ucai.fulicenter.ui.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -16,10 +17,12 @@ import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import cn.ucai.fulicenter.R;
 import cn.ucai.fulicenter.application.FuLiCenterApplication;
 import cn.ucai.fulicenter.data.bean.User;
 import cn.ucai.fulicenter.data.utils.ImageLoader;
+import cn.ucai.fulicenter.ui.activity.SettingsActivity;
 
 /**
  * Created by clawpo on 2017/5/11.
@@ -73,5 +76,10 @@ public class PersonalFragment extends Fragment {
         SimpleAdapter adapter = new SimpleAdapter(getContext(), data, R.layout.simple_adapter,
                 new String[]{"order"}, new int[]{R.id.iv_order});
         mCenterUserOrderLis.setAdapter(adapter);
+    }
+
+    @OnClick({R.id.center_top, R.id.center_user_info})
+    public void onSettings(View view) {
+        startActivity(new Intent(getContext(),SettingsActivity.class));
     }
 }

@@ -45,4 +45,5 @@
     <string name="order_nothing">order is noting</string>
     <string name="confirm_order">confirm order</string>
     <string name="skip">skip</string>
+    <string name="settings">settings</string>
 </resources>
