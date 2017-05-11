@@ -73,7 +73,6 @@ public class BoutiqueFragment extends Fragment {
                 pd.dismiss();
                 setLayoutVisibility(false);
                 setListVisibility(true);
-                L.e(TAG,"result="+result);
 
                 if (result!=null){
                     ArrayList<BoutiqueBean> list = ResultUtils.array2List(result);
@@ -90,7 +89,6 @@ public class BoutiqueFragment extends Fragment {
                 L.e("main","error="+error);
                 pd.dismiss();
                 setLayoutVisibility(false);
-                L.e(TAG,"adapter="+adapter);
                 if (adapter==null || adapter.getItemCount()==1){
                     setListVisibility(false);
                 }
@@ -148,8 +146,6 @@ public class BoutiqueFragment extends Fragment {
     }
 
     private void updateUI(ArrayList<BoutiqueBean> list) {
-        L.e(TAG,"updateUI....list="+list);
-        L.e(TAG,"updateUI....adapter="+adapter);
         if (adapter==null){
             adapter = new BoutiqueAdapter(list,getContext());
             mRvGoods.setAdapter(adapter);
