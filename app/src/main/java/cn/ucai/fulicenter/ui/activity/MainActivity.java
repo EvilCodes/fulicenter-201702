@@ -133,4 +133,14 @@ public class MainActivity extends AppCompatActivity {
             setFragment();
         }
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        L.e(TAG,"onResume,index="+index+",user="+FuLiCenterApplication.getInstance().getCurrentUser());
+        if (index==4 && FuLiCenterApplication.getInstance().getCurrentUser() == null){
+            index = 0;
+            setFragment();
+        }
+    }
 }
