@@ -13,7 +13,10 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.ucai.fulicenter.R;
 import cn.ucai.fulicenter.application.FuLiCenterApplication;
+import cn.ucai.fulicenter.application.I;
 import cn.ucai.fulicenter.data.bean.User;
+import cn.ucai.fulicenter.data.net.IUserModel;
+import cn.ucai.fulicenter.data.net.UserModel;
 import cn.ucai.fulicenter.data.utils.ImageLoader;
 import cn.ucai.fulicenter.data.utils.SharePrefrenceUtils;
 
@@ -30,6 +33,7 @@ public class SettingsActivity extends AppCompatActivity {
     TextView mTvUserProfileName;
     @BindView(R.id.tv_user_profile_nick)
     TextView mTvUserProfileNick;
+    IUserModel model;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -38,6 +42,7 @@ public class SettingsActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         mTvCommonTitle.setText(R.string.settings);
         initData();
+        model = new UserModel();
     }
 
     private void initData() {
@@ -67,5 +72,18 @@ public class SettingsActivity extends AppCompatActivity {
         SharePrefrenceUtils.getInstance().removeUser();
         startActivity(new Intent(SettingsActivity.this,LoginActivity.class));
         finish();
+    }
+
+    @OnClick(R.id.layout_user_profile_nickname)
+    public void updateNick(){
+        startActivityForResult(new Intent(SettingsActivity.this,UpdateNickActivity.class), I.REQUEST_CODE_NICK);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode==I.REQUEST_CODE_NICK && resultCode==RESULT_OK){
+            initData();
+        }
     }
 }
