@@ -12,12 +12,18 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import cn.ucai.fulicenter.R;
+import cn.ucai.fulicenter.application.FuLiCenterApplication;
+import cn.ucai.fulicenter.data.bean.User;
+import cn.ucai.fulicenter.data.local.UserDao;
+import cn.ucai.fulicenter.data.utils.L;
+import cn.ucai.fulicenter.data.utils.SharePrefrenceUtils;
 
 /**
  * Created by clawpo on 2017/5/3.
  */
 
 public class SplashActivity extends AppCompatActivity {
+    private static final String TAG = "SplashActivity";
 
     private final static int time = 5000;
     MyCountDownTimer cdt;
@@ -32,6 +38,28 @@ public class SplashActivity extends AppCompatActivity {
         bind = ButterKnife.bind(this);
         cdt = new MyCountDownTimer(time, 1000);
         cdt.start();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if (FuLiCenterApplication.getInstance().getCurrentUser()==null){
+                    String username = SharePrefrenceUtils.getInstance().getUserName();
+                    L.e(TAG,"username="+username);
+                    if (username!=null){
+                        UserDao dao = new UserDao(SplashActivity.this);
+                        User user = dao.getUser(username);
+                        L.e(TAG,"user="+user);
+                        if (user!=null){
+                            FuLiCenterApplication.getInstance().setCurrentUser(user);
+                        }
+                    }
+                }
+            }
+        }).start();
     }
 
     @OnClick(R.id.tv_skip) void skip(){

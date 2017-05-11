@@ -47,6 +47,7 @@ public class DBManager {
                     + " where " + DBOpenHelper.USER_COLUMN_NAME + "='" + username + "'";
             Cursor cursor = database.rawQuery(sql, null);
             while (cursor.moveToNext()) {
+                user = new User();
                 user.setMuserName(username);
                 user.setMuserNick(cursor.getString(cursor.getColumnIndex(DBOpenHelper.USER_COLUMN_NICK)));
                 user.setMavatarId(cursor.getInt(cursor.getColumnIndex(DBOpenHelper.USER_COLUMN_AVATAR)));
