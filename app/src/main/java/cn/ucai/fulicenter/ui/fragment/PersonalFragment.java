@@ -49,6 +49,12 @@ public class PersonalFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         user = FuLiCenterApplication.getInstance().getCurrentUser();
         if (user != null) {
             mTvUserName.setText(user.getMuserNick());
