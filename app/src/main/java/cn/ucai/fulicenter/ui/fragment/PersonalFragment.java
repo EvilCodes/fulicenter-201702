@@ -20,7 +20,11 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.ucai.fulicenter.R;
 import cn.ucai.fulicenter.application.FuLiCenterApplication;
+import cn.ucai.fulicenter.data.bean.MessageBean;
 import cn.ucai.fulicenter.data.bean.User;
+import cn.ucai.fulicenter.data.net.IUserModel;
+import cn.ucai.fulicenter.data.net.OnCompleteListener;
+import cn.ucai.fulicenter.data.net.UserModel;
 import cn.ucai.fulicenter.data.utils.ImageLoader;
 import cn.ucai.fulicenter.ui.activity.SettingsActivity;
 
@@ -36,6 +40,10 @@ public class PersonalFragment extends Fragment {
     TextView mTvUserName;
     @BindView(R.id.center_user_order_lis)
     GridView mCenterUserOrderLis;
+    IUserModel model;
+    @BindView(R.id.tv_collect_count)
+    TextView mTvCollectCount;
+    int collecCount = 0;
 
     @Nullable
     @Override
@@ -43,6 +51,7 @@ public class PersonalFragment extends Fragment {
         View view = View.inflate(getContext(), R.layout.fragment_personal, null);
         ButterKnife.bind(this, view);
         initOrderList();
+        model = new UserModel();
         return view;
     }
 
@@ -55,11 +64,35 @@ public class PersonalFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        mTvCollectCount.setText(String.valueOf(collecCount));
         user = FuLiCenterApplication.getInstance().getCurrentUser();
         if (user != null) {
             mTvUserName.setText(user.getMuserNick());
             ImageLoader.setAvatar(ImageLoader.getAvatarUrl(user), getContext(), mIvUserAvatar);
+            initCollectCount();
         }
+    }
+
+    private void initCollectCount() {
+        model.loadCollectsCount(getContext(), user.getMuserName(),
+                new OnCompleteListener<MessageBean>() {
+                    @Override
+                    public void onSuccess(MessageBean result) {
+                        if (result != null && result.isSuccess()) {
+                            collecCount = Integer.parseInt(result.getMsg());
+                        }else{
+                            collecCount = 0;
+                        }
+                        mTvCollectCount.setText(String.valueOf(collecCount));
+
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        collecCount = 0;
+                        mTvCollectCount.setText(String.valueOf(collecCount));
+                    }
+                });
     }
 
     private void initOrderList() {
@@ -86,6 +119,6 @@ public class PersonalFragment extends Fragment {
 
     @OnClick({R.id.center_top, R.id.center_user_info})
     public void onSettings(View view) {
-        startActivity(new Intent(getContext(),SettingsActivity.class));
+        startActivity(new Intent(getContext(), SettingsActivity.class));
     }
 }
