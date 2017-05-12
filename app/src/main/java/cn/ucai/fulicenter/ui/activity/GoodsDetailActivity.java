@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.webkit.WebView;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import butterknife.BindView;
@@ -11,13 +12,18 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import cn.ucai.fulicenter.R;
+import cn.ucai.fulicenter.application.FuLiCenterApplication;
 import cn.ucai.fulicenter.application.I;
 import cn.ucai.fulicenter.data.bean.AlbumsBean;
 import cn.ucai.fulicenter.data.bean.GoodsDetailsBean;
+import cn.ucai.fulicenter.data.bean.MessageBean;
 import cn.ucai.fulicenter.data.bean.PropertiesBean;
+import cn.ucai.fulicenter.data.bean.User;
 import cn.ucai.fulicenter.data.net.GoodsModel;
 import cn.ucai.fulicenter.data.net.IGoodsModel;
+import cn.ucai.fulicenter.data.net.IUserModel;
 import cn.ucai.fulicenter.data.net.OnCompleteListener;
+import cn.ucai.fulicenter.data.net.UserModel;
 import cn.ucai.fulicenter.data.utils.L;
 import cn.ucai.fulicenter.ui.view.FlowIndicator;
 import cn.ucai.fulicenter.ui.view.SlideAutoLoopView;
@@ -45,6 +51,11 @@ public class GoodsDetailActivity extends AppCompatActivity {
     @BindView(R.id.wv_good_brief)
     WebView mWvGoodBrief;
     Unbinder bind;
+    User user;
+    IUserModel userModel;
+    boolean isCollect = false;
+    @BindView(R.id.iv_good_collect)
+    ImageView mIvGoodCollect;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -59,10 +70,10 @@ public class GoodsDetailActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (bind!=null){
+        if (bind != null) {
             bind.unbind();
         }
-        if (mSalv!=null){
+        if (mSalv != null) {
             mSalv.stopPlayLoop();
         }
     }
@@ -72,11 +83,13 @@ public class GoodsDetailActivity extends AppCompatActivity {
             finish();
         } else {
             model = new GoodsModel();
+            userModel = new UserModel();
             loadData();
         }
     }
 
     private void loadData() {
+        user = FuLiCenterApplication.getInstance().getCurrentUser();
         model.loadGoodsDetail(GoodsDetailActivity.this, goodsId,
                 new OnCompleteListener<GoodsDetailsBean>() {
                     @Override
@@ -92,6 +105,27 @@ public class GoodsDetailActivity extends AppCompatActivity {
 
                     }
                 });
+
+        if (user != null) {
+            userModel.isCollect(GoodsDetailActivity.this, String.valueOf(goodsId), user.getMuserName(),
+                    new OnCompleteListener<MessageBean>() {
+                        @Override
+                        public void onSuccess(MessageBean result) {
+                            isCollect = result != null && result.isSuccess() ? true : false;
+                            updateCollectUI();
+                        }
+
+                        @Override
+                        public void onError(String error) {
+                            isCollect = false;
+                            updateCollectUI();
+                        }
+                    });
+        }
+    }
+
+    private void updateCollectUI() {
+        mIvGoodCollect.setImageResource(isCollect?R.mipmap.bg_collect_out:R.mipmap.bg_collect_in);
     }
 
     private void showData(GoodsDetailsBean bean) {
@@ -99,15 +133,15 @@ public class GoodsDetailActivity extends AppCompatActivity {
         mTvGoodName.setText(bean.getGoodsName());
         mTvGoodPriceCurrent.setText(bean.getCurrencyPrice());
         mTvGoodPriceShop.setText(bean.getShopPrice());
-        mSalv.startPlayLoop(mIndicator,getAlbumImgUrl(bean),getAlbumImgCount(bean));
-        mWvGoodBrief.loadDataWithBaseURL(null,bean.getGoodsBrief(),I.TEXT_HTML,I.UTF_8,null);
+        mSalv.startPlayLoop(mIndicator, getAlbumImgUrl(bean), getAlbumImgCount(bean));
+        mWvGoodBrief.loadDataWithBaseURL(null, bean.getGoodsBrief(), I.TEXT_HTML, I.UTF_8, null);
     }
 
     private String[] getAlbumImgUrl(GoodsDetailsBean bean) {
         AlbumsBean[] imgs = getAlbumImg(bean);
-        if (imgs!=null){
+        if (imgs != null) {
             String[] urls = new String[imgs.length];
-            for (int i=0;i<imgs.length;i++) {
+            for (int i = 0; i < imgs.length; i++) {
                 urls[i] = imgs[i].getImgUrl();
             }
             return urls;
@@ -117,16 +151,16 @@ public class GoodsDetailActivity extends AppCompatActivity {
 
     private int getAlbumImgCount(GoodsDetailsBean bean) {
         AlbumsBean[] imgs = getAlbumImg(bean);
-        if (imgs!=null){
+        if (imgs != null) {
             return imgs.length;
         }
         return 0;
     }
 
     private AlbumsBean[] getAlbumImg(GoodsDetailsBean bean) {
-        if (bean.getProperties()!=null&&bean.getProperties().length>0){
+        if (bean.getProperties() != null && bean.getProperties().length > 0) {
             PropertiesBean propertiesBean = bean.getProperties()[0];
-            if (propertiesBean!=null&&propertiesBean.getAlbums()!=null){
+            if (propertiesBean != null && propertiesBean.getAlbums() != null) {
                 return propertiesBean.getAlbums();
             }
         }
