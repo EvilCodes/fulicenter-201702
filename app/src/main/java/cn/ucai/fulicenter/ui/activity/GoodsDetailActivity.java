@@ -1,5 +1,6 @@
 package cn.ucai.fulicenter.ui.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -89,7 +90,6 @@ public class GoodsDetailActivity extends AppCompatActivity {
     }
 
     private void loadData() {
-        user = FuLiCenterApplication.getInstance().getCurrentUser();
         model.loadGoodsDetail(GoodsDetailActivity.this, goodsId,
                 new OnCompleteListener<GoodsDetailsBean>() {
                     @Override
@@ -106,6 +106,11 @@ public class GoodsDetailActivity extends AppCompatActivity {
                     }
                 });
 
+        loadCollectStatus();
+    }
+
+    private void loadCollectStatus() {
+        user = FuLiCenterApplication.getInstance().getCurrentUser();
         if (user != null) {
             userModel.isCollect(GoodsDetailActivity.this, String.valueOf(goodsId), user.getMuserName(),
                     new OnCompleteListener<MessageBean>() {
@@ -170,5 +175,20 @@ public class GoodsDetailActivity extends AppCompatActivity {
     @OnClick(R.id.backClickArea)
     public void onClick() {
         finish();
+    }
+
+    @OnClick(R.id.iv_good_collect)
+    public void onCollectClick(){
+        if (user==null){
+            startActivityForResult(new Intent(GoodsDetailActivity.this,LoginActivity.class),0);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK){
+            loadCollectStatus();
+        }
     }
 }
