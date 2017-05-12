@@ -1,6 +1,7 @@
 package cn.ucai.fulicenter.ui.activity;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -67,6 +68,7 @@ public class SettingsActivity extends AppCompatActivity {
     TextView mTvUserProfileNick;
     IUserModel model;
     Bundle savedInstanceState;
+    ProgressDialog pd;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -102,6 +104,18 @@ public class SettingsActivity extends AppCompatActivity {
             case R.id.btn_logout:
                 logout();
                 break;
+        }
+    }
+
+    private void initDialog(){
+        pd = new ProgressDialog(SettingsActivity.this);
+        pd.setMessage(getString(R.string.update_user_avatar));
+        pd.show();
+    }
+
+    private void dismissDialog(){
+        if (pd!=null && pd.isShowing()){
+            pd.dismiss();
         }
     }
 
@@ -142,6 +156,7 @@ public class SettingsActivity extends AppCompatActivity {
                     if (uri == null) {
                         return;
                     }
+                    initDialog();
                     String cropImagePath = getRealFilePathFromUri(getApplicationContext(), uri);
                     Bitmap bitMap = BitmapFactory.decodeFile(cropImagePath);
                     mIvUserProfileAvatar.setImageBitmap(bitMap);
@@ -154,6 +169,8 @@ public class SettingsActivity extends AppCompatActivity {
                 break;
         }
     }
+
+
 
     private void uploadAvatar(File file) {
         User user = FuLiCenterApplication.getInstance().getCurrentUser();
@@ -171,11 +188,12 @@ public class SettingsActivity extends AppCompatActivity {
                                 }
                             }
                         }
+                        dismissDialog();
                     }
 
                     @Override
                     public void onError(String error) {
-
+                        dismissDialog();
                     }
                 });
     }
