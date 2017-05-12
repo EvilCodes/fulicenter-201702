@@ -21,7 +21,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -57,6 +56,7 @@ public class SettingsActivity extends AppCompatActivity {
     @BindView(R.id.tv_user_profile_nick)
     TextView mTvUserProfileNick;
     IUserModel model;
+    Bundle savedInstanceState;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -69,7 +69,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         //upload avatar begin------
         //创建拍照存储的临时文件
-        createCameraTempFile(savedInstanceState);
+         this.savedInstanceState = savedInstanceState;
         //upload avatar end------
     }
 
@@ -165,19 +165,19 @@ public class SettingsActivity extends AppCompatActivity {
         final PopupWindow popupWindow = new PopupWindow(view, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         popupWindow.setBackgroundDrawable(getResources().getDrawable(android.R.color.transparent));
         popupWindow.setOutsideTouchable(true);
-        View parent = LayoutInflater.from(this).inflate(R.layout.activity_main, null);
+        View parent = LayoutInflater.from(this).inflate(R.layout.activity_settings, null);
         popupWindow.showAtLocation(parent, Gravity.BOTTOM, 0, 0);
         //popupWindow在弹窗的时候背景半透明
-        final WindowManager.LayoutParams params = getWindow().getAttributes();
-        params.alpha = 0.5f;
-        getWindow().setAttributes(params);
-        popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
-            @Override
-            public void onDismiss() {
-                params.alpha = 1.0f;
-                getWindow().setAttributes(params);
-            }
-        });
+//        final WindowManager.LayoutParams params = getWindow().getAttributes();
+//        params.alpha = 0.5f;
+//        getWindow().setAttributes(params);
+//        popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+//            @Override
+//            public void onDismiss() {
+//                params.alpha = 1.0f;
+//                getWindow().setAttributes(params);
+//            }
+//        });
 
         btnCarema.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -189,6 +189,8 @@ public class SettingsActivity extends AppCompatActivity {
                     ActivityCompat.requestPermissions(SettingsActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                             WRITE_EXTERNAL_STORAGE_REQUEST_CODE);
                 } else {
+                    //创建拍照存储的临时文件
+                    createCameraTempFile(savedInstanceState);
                     //跳转到调用系统相机
                     gotoCarema();
                 }
