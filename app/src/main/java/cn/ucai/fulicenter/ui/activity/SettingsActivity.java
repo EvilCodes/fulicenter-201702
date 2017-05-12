@@ -25,7 +25,10 @@ import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -33,10 +36,16 @@ import butterknife.OnClick;
 import cn.ucai.fulicenter.R;
 import cn.ucai.fulicenter.application.FuLiCenterApplication;
 import cn.ucai.fulicenter.application.I;
+import cn.ucai.fulicenter.data.bean.Result;
 import cn.ucai.fulicenter.data.bean.User;
+import cn.ucai.fulicenter.data.local.UserDao;
 import cn.ucai.fulicenter.data.net.IUserModel;
+import cn.ucai.fulicenter.data.net.OnCompleteListener;
 import cn.ucai.fulicenter.data.net.UserModel;
+import cn.ucai.fulicenter.data.utils.CommonUtils;
 import cn.ucai.fulicenter.data.utils.ImageLoader;
+import cn.ucai.fulicenter.data.utils.L;
+import cn.ucai.fulicenter.data.utils.ResultUtils;
 import cn.ucai.fulicenter.data.utils.SharePrefrenceUtils;
 import cn.ucai.fulicenter.ui.utils.ClipImageActivity;
 
@@ -47,6 +56,7 @@ import static android.R.attr.type;
  */
 
 public class SettingsActivity extends AppCompatActivity {
+    private static final String TAG = "SettingsActivity";
     @BindView(R.id.tv_common_title)
     TextView mTvCommonTitle;
     @BindView(R.id.iv_user_profile_avatar)
@@ -136,12 +146,46 @@ public class SettingsActivity extends AppCompatActivity {
                     Bitmap bitMap = BitmapFactory.decodeFile(cropImagePath);
                     mIvUserProfileAvatar.setImageBitmap(bitMap);
                     //此处后面可以将bitMap转为二进制上传后台网络
-                    //......
+                    File file = saveBitmapFile(bitMap);
+                    L.e(TAG,"file="+file.getAbsolutePath());
+                    uploadAvatar(file);
 
                 }
                 break;
         }
     }
+
+    private void uploadAvatar(File file) {
+        User user = FuLiCenterApplication.getInstance().getCurrentUser();
+        model.uploadAvatar(SettingsActivity.this, user.getMuserName(), null, file,
+                new OnCompleteListener<String>() {
+                    @Override
+                    public void onSuccess(String s) {
+                        if (s!=null){
+                            Result<User> result = ResultUtils.getResultFromJson(s, User.class);
+                            if (result!=null){
+                                if (result.getRetCode() == I.MSG_UPLOAD_AVATAR_FAIL){
+                                    CommonUtils.showLongToast(R.string.update_user_avatar_fail);
+                                }else{
+                                    uploadSucceess(result.getRetData());
+                                }
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onError(String error) {
+
+                    }
+                });
+    }
+
+    private void uploadSucceess(User user) {
+        FuLiCenterApplication.getInstance().setCurrentUser(user);
+        UserDao dao = new UserDao(SettingsActivity.this);
+        dao.saveUser(user);
+    }
+
     //upload avatar begin------
     //请求相机
     private static final int REQUEST_CAPTURE = 100;
@@ -340,6 +384,44 @@ public class SettingsActivity extends AppCompatActivity {
                 // Permission Denied
             }
         }
+    }
+    /**
+     * 返回头像保存在sd卡的位置:
+     * Android/data/cn.ucai.superwechat/files/pictures/user_avatar
+     * @param context
+     * @param path
+     * @return
+     */
+    public static String getAvatarPath(Context context, String path){
+        File dir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File folder = new File(dir,path);
+        if(!folder.exists()){
+            folder.mkdir();
+        }
+        return folder.getAbsolutePath();
+    }
+
+    private File saveBitmapFile(Bitmap bitmap) {
+        if (bitmap != null) {
+            String imagePath = getAvatarPath(SettingsActivity.this,I.AVATAR_TYPE)+"/"+getAvatarName()+".jpg";
+            File file = new File(imagePath);//将要保存图片的路径
+            L.e("file path="+file.getAbsolutePath());
+            try {
+                BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+                bos.flush();
+                bos.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return file;
+        }
+        return null;
+    }
+    String avatarName;
+    private String getAvatarName() {
+        avatarName = String.valueOf(System.currentTimeMillis());
+        return avatarName;
     }
     //upload avatar end------
 }
