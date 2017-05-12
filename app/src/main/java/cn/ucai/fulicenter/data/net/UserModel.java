@@ -74,9 +74,11 @@ public class UserModel implements IUserModel {
     }
 
     private void collectAction(int action, Context context, String goodsId, String username, OnCompleteListener<MessageBean> listener) {
-        String url = I.REQUEST_ADD_COLLECT;
+        String url = I.REQUEST_IS_COLLECT;
         if (action == I.ACTION_DELETE_COLLECT){
             url = I.REQUEST_DELETE_COLLECT;
+        }else if (action == I.ACTION_ADD_COLLECT){
+            url = I.REQUEST_ADD_COLLECT;
         }
         OkHttpUtils<MessageBean> utils = new OkHttpUtils<>(context);
         utils.setRequestUrl(url)
@@ -89,5 +91,10 @@ public class UserModel implements IUserModel {
     @Override
     public void removeCollect(Context context, String goodsId, String username, OnCompleteListener<MessageBean> listener) {
         collectAction(I.ACTION_DELETE_COLLECT,context,goodsId,username,listener);
+    }
+
+    @Override
+    public void isCollect(Context context, String goodsId, String username, OnCompleteListener<MessageBean> listener) {
+        collectAction(I.ACTION_IS_COLLECT,context,goodsId,username,listener);
     }
 }
