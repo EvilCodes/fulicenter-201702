@@ -26,6 +26,7 @@ import cn.ucai.fulicenter.data.net.IUserModel;
 import cn.ucai.fulicenter.data.net.OnCompleteListener;
 import cn.ucai.fulicenter.data.net.UserModel;
 import cn.ucai.fulicenter.data.utils.ImageLoader;
+import cn.ucai.fulicenter.ui.activity.CollectsListActivity;
 import cn.ucai.fulicenter.ui.activity.SettingsActivity;
 
 /**
@@ -120,5 +121,10 @@ public class PersonalFragment extends Fragment {
     @OnClick({R.id.center_top, R.id.center_user_info})
     public void onSettings(View view) {
         startActivity(new Intent(getContext(), SettingsActivity.class));
+    }
+
+    @OnClick(R.id.layout_center_collect)
+    public void onCollectLayoutClick(){
+        startActivity(new Intent(getContext(),CollectsListActivity.class));
     }
 }
