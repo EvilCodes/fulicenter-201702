@@ -181,6 +181,13 @@ public class GoodsDetailActivity extends AppCompatActivity {
         finish();
     }
 
+    @Override
+    public void onBackPressed() {
+        setResult(RESULT_OK,new Intent().putExtra(I.Goods.KEY_GOODS_ID,goodsId)
+                .putExtra(I.Goods.KEY_IS_COLLECT,isCollect));
+        super.onBackPressed();
+    }
+
     @OnClick(R.id.iv_good_collect)
     public void onCollectClick(){
         if (user==null){
