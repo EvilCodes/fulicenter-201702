@@ -14,9 +14,15 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.ucai.fulicenter.R;
+import cn.ucai.fulicenter.application.FuLiCenterApplication;
 import cn.ucai.fulicenter.application.I;
 import cn.ucai.fulicenter.data.bean.CollectBean;
+import cn.ucai.fulicenter.data.bean.MessageBean;
+import cn.ucai.fulicenter.data.net.IUserModel;
+import cn.ucai.fulicenter.data.net.OnCompleteListener;
+import cn.ucai.fulicenter.data.utils.CommonUtils;
 import cn.ucai.fulicenter.data.utils.ImageLoader;
+import cn.ucai.fulicenter.ui.activity.CollectsListActivity;
 import cn.ucai.fulicenter.ui.activity.GoodsDetailActivity;
 
 /**
@@ -27,10 +33,19 @@ public class CollectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     List<CollectBean> list;
     Context context;
     boolean isMore = true;
+    IUserModel model;
 
     public CollectAdapter(List<CollectBean> list, Context context) {
         this.list = list;
         this.context = context;
+    }
+
+    public IUserModel getModel() {
+        return model;
+    }
+
+    public void setModel(IUserModel model) {
+        this.model = model;
     }
 
     @Override
@@ -42,7 +57,7 @@ public class CollectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         if (getItemViewType(position)==I.TYPE_FOOTER){
             ((FooterViewHolder)holder).mTvFooter.setText(getFooter());
         }else{
@@ -53,12 +68,41 @@ public class CollectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    context.startActivity(new Intent(context,GoodsDetailActivity.class)
-                    .putExtra(I.GoodsDetails.KEY_GOODS_ID,bean.getGoodsId()));
+                    ((CollectsListActivity)context).startActivityForResult(new Intent(context,GoodsDetailActivity.class)
+                            .putExtra(I.GoodsDetails.KEY_GOODS_ID,bean.getGoodsId()),I.REQUEST_CODE_GO_DETAIL);
+                }
+            });
+
+            ((GoodsViewHolder) holder).mIvDel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    removeCollect(position);
                 }
             });
         }
 
+    }
+
+    private void removeCollect(final int position) {
+        if (model!=null){
+            model.removeCollect(context, String.valueOf(list.get(position).getGoodsId()),
+                    FuLiCenterApplication.getInstance().getCurrentUser().getMuserName(),
+                    new OnCompleteListener<MessageBean>() {
+                        @Override
+                        public void onSuccess(MessageBean result) {
+                            if (result!=null && result.isSuccess()){
+                                CommonUtils.showLongToast(result.getMsg());
+                                list.remove(position);
+                                notifyDataSetChanged();
+                            }
+                        }
+
+                        @Override
+                        public void onError(String error) {
+
+                        }
+                    });
+        }
     }
 
     private int getFooter() {

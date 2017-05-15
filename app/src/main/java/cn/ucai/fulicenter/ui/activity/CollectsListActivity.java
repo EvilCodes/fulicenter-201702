@@ -1,6 +1,7 @@
 package cn.ucai.fulicenter.ui.activity;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -53,6 +54,7 @@ public class CollectsListActivity extends AppCompatActivity {
     int pageSize = I.PAGE_SIZE_DEFAULT;
     Unbinder bind;
     ProgressDialog pd;
+    ArrayList<CollectBean> collectList;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -199,12 +201,18 @@ public class CollectsListActivity extends AppCompatActivity {
         L.e(TAG,"updateUI....list="+list);
         L.e(TAG,"updateUI....adapter="+adapter);
         if (adapter==null){
-            adapter = new CollectAdapter(list,CollectsListActivity.this);
+            collectList = new ArrayList<>();
+            collectList.addAll(list);
+            adapter = new CollectAdapter(collectList,CollectsListActivity.this);
             mRvGoods.setAdapter(adapter);
+            adapter.setModel(model);
         }else{
             if (pageId==1){
+                collectList.clear();
+                collectList.addAll(list);
                 adapter.initData(list);
             }else {
+                collectList.addAll(list);
                 adapter.addData(list);
             }
         }
@@ -221,5 +229,19 @@ public class CollectsListActivity extends AppCompatActivity {
     @OnClick(R.id.backClickArea)
     public void onClick() {
         finish();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == I.REQUEST_CODE_GO_DETAIL && resultCode == RESULT_OK){
+            int goodsId = data.getIntExtra(I.Goods.KEY_GOODS_ID, 0);
+            boolean isCollect = data.getBooleanExtra(I.Goods.KEY_IS_COLLECT,true);
+            L.e(TAG,"onActivityResult,goodsId="+goodsId+",isCollect="+isCollect);
+            if (!isCollect){
+                collectList.remove(new CollectBean(goodsId));
+                adapter.notifyDataSetChanged();
+            }
+        }
     }
 }

@@ -175,6 +175,9 @@ public class GoodsDetailActivity extends AppCompatActivity {
 
     @OnClick(R.id.backClickArea)
     public void onClick() {
+        setResult(RESULT_OK,new Intent().putExtra(I.Goods.KEY_GOODS_ID,goodsId)
+        .putExtra(I.Goods.KEY_IS_COLLECT,isCollect));
+
         finish();
     }
 
