@@ -24,6 +24,7 @@ import cn.ucai.fulicenter.R;
 import cn.ucai.fulicenter.application.FuLiCenterApplication;
 import cn.ucai.fulicenter.data.bean.CartBean;
 import cn.ucai.fulicenter.data.bean.GoodsDetailsBean;
+import cn.ucai.fulicenter.data.bean.MessageBean;
 import cn.ucai.fulicenter.data.bean.User;
 import cn.ucai.fulicenter.data.net.IUserModel;
 import cn.ucai.fulicenter.data.net.OnCompleteListener;
@@ -170,6 +171,7 @@ public class CartFragment extends Fragment {
         if (adapter == null) {
             adapter = new CartAdapter(getContext(), list);
             adapter.setCbkListener(cbkListener);
+            adapter.setClickListener(clickListener);
             mRvGoods.setAdapter(adapter);
         } else {
             adapter.notifyDataSetChanged();
@@ -220,4 +222,32 @@ public class CartFragment extends Fragment {
             sumPrice();
         }
     };
+
+    View.OnClickListener clickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            int position = (int) v.getTag();
+            updateCart(position,1);
+        }
+    };
+
+    private void updateCart(final int position, final int count) {
+        final CartBean bean = list.get(position);
+        model.updateCart(getContext(), bean.getId(), bean.getCount() + count, false,
+                new OnCompleteListener<MessageBean>() {
+                    @Override
+                    public void onSuccess(MessageBean result) {
+                        if (result!=null && result.isSuccess()){
+                            list.get(position).setCount(bean.getCount()+count);
+                            adapter.notifyDataSetChanged();
+                            sumPrice();
+                        }
+                    }
+
+                    @Override
+                    public void onError(String error) {
+
+                    }
+                });
+    }
 }
