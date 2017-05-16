@@ -147,7 +147,7 @@ public class UserModel implements IUserModel {
     public void loadCart(Context context, String username, OnCompleteListener<CartBean[]> listener) {
         OkHttpUtils<CartBean[]> utils = new OkHttpUtils<>(context);
         utils.setRequestUrl(I.REQUEST_FIND_CARTS)
-                .addParam(I.Cart.ID,username)
+                .addParam(I.Cart.USER_NAME,username)
                 .targetClass(CartBean[].class)
                 .execute(listener);
     }

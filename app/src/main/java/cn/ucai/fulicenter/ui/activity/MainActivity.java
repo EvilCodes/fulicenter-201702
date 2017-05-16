@@ -15,6 +15,7 @@ import cn.ucai.fulicenter.application.FuLiCenterApplication;
 import cn.ucai.fulicenter.application.I;
 import cn.ucai.fulicenter.data.utils.L;
 import cn.ucai.fulicenter.ui.fragment.BoutiqueFragment;
+import cn.ucai.fulicenter.ui.fragment.CartFragment;
 import cn.ucai.fulicenter.ui.fragment.CategoryFragment;
 import cn.ucai.fulicenter.ui.fragment.NewGoodsFragment;
 import cn.ucai.fulicenter.ui.fragment.PersonalFragment;
@@ -24,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     NewGoodsFragment mNewGoodsFragment;
     BoutiqueFragment mBoutiqueFragment;
     CategoryFragment mCategoryFragment;
+    CartFragment mCartFragment;
     PersonalFragment mPersonalFragment;
     Fragment[] mFragments;
     RadioButton[] mRadioButtons;
@@ -62,11 +64,13 @@ public class MainActivity extends AppCompatActivity {
         mNewGoodsFragment = new NewGoodsFragment();
         mBoutiqueFragment = new BoutiqueFragment();
         mCategoryFragment = new CategoryFragment();
+        mCartFragment = new CartFragment();
         mPersonalFragment = new PersonalFragment();
         mFragments = new Fragment[5];
         mFragments[0] = mNewGoodsFragment;
         mFragments[1] = mBoutiqueFragment;
         mFragments[2] = mCategoryFragment;
+        mFragments[3] = mCartFragment;
         mFragments[4] = mPersonalFragment;
     }
 
@@ -91,6 +95,14 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.layout_category:
                 index = 2;
+                break;
+            case R.id.layout_cart:
+                if (FuLiCenterApplication.getInstance().getCurrentUser() == null) {
+                    startActivityForResult(new Intent(MainActivity.this, LoginActivity.class),
+                            I.REQUEST_CODE_LOGIN_FROM_CART);
+                } else {
+                    index = 3;
+                }
                 break;
             case R.id.layout_personal_center:
                 if (FuLiCenterApplication.getInstance().getCurrentUser() == null) {
@@ -128,8 +140,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         L.e(TAG,"onActivityResult,requestCode="+requestCode+",resultCode="+resultCode);
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK && requestCode == I.REQUEST_CODE_LOGIN){
-            index = 4;
+        if (resultCode == RESULT_OK) {
+            if (requestCode == I.REQUEST_CODE_LOGIN) {
+                index = 4;
+            }
+            if (requestCode == I.REQUEST_CODE_LOGIN_FROM_CART){
+                index = 3;
+            }
             setFragment();
         }
     }
