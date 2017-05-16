@@ -227,4 +227,32 @@ public class GoodsDetailActivity extends AppCompatActivity {
             loadCollectStatus();
         }
     }
+
+    @OnClick(R.id.iv_good_cart)
+    public void onCartClick(){
+        if (FuLiCenterApplication.getInstance().isLogined()){
+            addCart();
+        }else{
+            startActivityForResult(new Intent(GoodsDetailActivity.this,LoginActivity.class),0);
+        }
+    }
+
+    private void addCart() {
+        userModel.addCart(GoodsDetailActivity.this, goodsId, user.getMuserName(),
+                I.ADD_CART_COUNT_DEFAULT, false, new OnCompleteListener<MessageBean>() {
+                    @Override
+                    public void onSuccess(MessageBean result) {
+                        if (result!=null && result.isSuccess()){
+                            CommonUtils.showLongToast(R.string.add_goods_success);
+                        }else{
+                            CommonUtils.showLongToast(R.string.add_goods_fail);
+                        }
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        CommonUtils.showLongToast(R.string.add_goods_fail);
+                    }
+                });
+    }
 }
