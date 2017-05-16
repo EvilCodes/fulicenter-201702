@@ -77,16 +77,17 @@ public class CartFragment extends Fragment {
                 public void onSuccess(CartBean[] result) {
                     pd.dismiss();
                     setLayoutVisibility(false);
-                    setListVisibility(true);
+                    setListVisibility(true,false);
                     list.clear();
 
                     if (result!=null){
                         list.addAll(ResultUtils.array2List(result));
                         updateUI();
-                    }else{
-                        if (adapter==null || adapter.getItemCount()==1){
-                            setListVisibility(false);
+                        if (list.size()==0){
+                            setListVisibility(false,false);
                         }
+                    }else{
+                        setListVisibility(false,false);
                     }
                 }
 
@@ -96,9 +97,7 @@ public class CartFragment extends Fragment {
                     pd.dismiss();
                     setLayoutVisibility(false);
                     list.clear();
-                    if (adapter==null || adapter.getItemCount()==1){
-                        setListVisibility(false);
-                    }
+                    setListVisibility(false,true);
                 }
             });
         }
@@ -142,7 +141,9 @@ public class CartFragment extends Fragment {
         mTvRefresh.setVisibility(visibility?View.VISIBLE:View.GONE);
     }
 
-    void setListVisibility(boolean visibility){
+    void setListVisibility(boolean visibility,boolean isError){
+        L.e(TAG,"setListVisibility,visibility="+visibility+",isError="+isError);
+        mTvNomore.setText(isError?R.string.reload_data:R.string.cart_no_more);
         mTvNomore.setVisibility(visibility?View.GONE:View.VISIBLE);
         mSrl.setVisibility(visibility?View.VISIBLE:View.GONE);
     }
