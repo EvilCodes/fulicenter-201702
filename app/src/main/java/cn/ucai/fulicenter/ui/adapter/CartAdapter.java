@@ -104,7 +104,11 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                 mCbCartSelected.setTag(position);
                 mCbCartSelected.setOnCheckedChangeListener(cbkListener);
                 mIvCartAdd.setTag(position);
+                mIvCartAdd.setTag(R.id.iv_cart_add,1);
                 mIvCartAdd.setOnClickListener(clickListener);
+                mIvCartDel.setTag(position);
+                mIvCartDel.setTag(R.id.iv_cart_del,-1);
+                mIvCartDel.setOnClickListener(clickListener);
             }
         }
     }

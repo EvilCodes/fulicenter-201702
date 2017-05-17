@@ -227,19 +227,55 @@ public class CartFragment extends Fragment {
         @Override
         public void onClick(View v) {
             int position = (int) v.getTag();
-            updateCart(position,1);
+            L.e(TAG,"position="+position+",v.getTag(R.id.iv_cart_add)="+v.getTag(R.id.iv_cart_add)
+                    +",v.getTag(R.id.iv_cart_del)="+v.getTag(R.id.iv_cart_del));
+            int count = 0;
+            if (v.getTag(R.id.iv_cart_add)!=null){
+                count = (int) v.getTag(R.id.iv_cart_add);
+            }
+            if (v.getTag(R.id.iv_cart_del)!=null){
+                count = (int) v.getTag(R.id.iv_cart_del);
+            }
+            L.e(TAG,"position="+position+",count="+count);
+            cartAction(position,count);
         }
     };
 
-    private void updateCart(final int position, final int count) {
+    private void cartAction(final int position, final int count) {
         final CartBean bean = list.get(position);
+        if (bean.getCount()==1 && count==-1){
+            remove(position,bean.getId());
+        }else{
+            update(position,bean,count);
+        }
+    }
+
+    private void remove(final int position, int id) {
+        model.removeCart(getContext(), id, new OnCompleteListener<MessageBean>() {
+            @Override
+            public void onSuccess(MessageBean result) {
+                if (result!=null && result.isSuccess()){
+                    list.remove(position);
+                    adapter.notifyItemRemoved(position);
+                    sumPrice();
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+
+            }
+        });
+    }
+
+    private void update(final int position,final CartBean bean, final int count) {
         model.updateCart(getContext(), bean.getId(), bean.getCount() + count, false,
                 new OnCompleteListener<MessageBean>() {
                     @Override
                     public void onSuccess(MessageBean result) {
                         if (result!=null && result.isSuccess()){
                             list.get(position).setCount(bean.getCount()+count);
-                            adapter.notifyDataSetChanged();
+                            adapter.notifyItemChanged(position);
                             sumPrice();
                         }
                     }
