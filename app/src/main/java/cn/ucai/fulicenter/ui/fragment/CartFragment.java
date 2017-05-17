@@ -244,6 +244,7 @@ public class CartFragment extends Fragment {
     };
 
     private void cartAction(final int position, final int count) {
+        L.e(TAG,"cartAction,position="+position+",list.size()="+list.size());
         final CartBean bean = list.get(position);
         if (bean.getCount()==1 && count==-1){
             remove(position,bean.getId());
@@ -257,8 +258,12 @@ public class CartFragment extends Fragment {
             @Override
             public void onSuccess(MessageBean result) {
                 if (result!=null && result.isSuccess()){
+                    L.e(TAG,"position="+position+",list.size="+list.size()+",adapter="+adapter.getItemCount());
                     list.remove(position);
-                    adapter.notifyItemRemoved(position);
+                    adapter.notifyDataSetChanged();
+//                    adapter.notifyItemRemoved(position);
+//                    adapter.notifyItemRangeRemoved(position,list.size()-position-1);
+                    L.e(TAG,"position="+position+",list.size="+list.size()+",adapter="+adapter.getItemCount());
                     sumPrice();
                 }
             }
