@@ -19,6 +19,7 @@ import cn.ucai.fulicenter.application.I;
 import cn.ucai.fulicenter.data.bean.CartBean;
 import cn.ucai.fulicenter.data.bean.GoodsDetailsBean;
 import cn.ucai.fulicenter.data.utils.ImageLoader;
+import cn.ucai.fulicenter.data.utils.L;
 import cn.ucai.fulicenter.ui.activity.GoodsDetailActivity;
 import cn.ucai.fulicenter.ui.activity.MainActivity;
 
@@ -27,6 +28,7 @@ import cn.ucai.fulicenter.ui.activity.MainActivity;
  */
 
 public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder> {
+    private static final String TAG = "CartAdapter";
     Context mContext;
     List<CartBean> mList;
     CompoundButton.OnCheckedChangeListener cbkListener;
@@ -83,6 +85,8 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         }
 
         public void bnid(int position) {
+            int gp = this.getAdapterPosition();
+            mCbCartSelected.setOnCheckedChangeListener(null);
             final CartBean bean = mList.get(position);
             if (bean!=null) {
                 GoodsDetailsBean goods = bean.getGoods();
