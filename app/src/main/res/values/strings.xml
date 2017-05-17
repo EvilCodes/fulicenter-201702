@@ -47,4 +47,5 @@
     <string name="confirm_order">confirm order</string>
     <string name="skip">skip</string>
     <string name="settings">settings</string>
+    <string name="order_title">order title</string>
 </resources>

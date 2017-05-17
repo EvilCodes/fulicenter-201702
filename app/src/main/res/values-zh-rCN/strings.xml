@@ -48,4 +48,5 @@
     <string name="confirm_order">确认订单</string>
     <string name="skip">跳过</string>
     <string name="settings">个人资料</string>
+    <string name="order_title">收货地址</string>
 </resources>

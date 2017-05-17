@@ -34,8 +34,10 @@ import cn.ucai.fulicenter.data.bean.User;
 import cn.ucai.fulicenter.data.net.IUserModel;
 import cn.ucai.fulicenter.data.net.OnCompleteListener;
 import cn.ucai.fulicenter.data.net.UserModel;
+import cn.ucai.fulicenter.data.utils.CommonUtils;
 import cn.ucai.fulicenter.data.utils.L;
 import cn.ucai.fulicenter.data.utils.ResultUtils;
+import cn.ucai.fulicenter.ui.activity.OrderActivity;
 import cn.ucai.fulicenter.ui.adapter.CartAdapter;
 import cn.ucai.fulicenter.ui.view.SpaceItemDecoration;
 
@@ -67,6 +69,7 @@ public class CartFragment extends Fragment {
     TextView mTvCartBuy;
     @BindView(R.id.layout_cart)
     RelativeLayout mLayoutCart;
+    int sumPrice,savePrice;
 
     @Nullable
     @Override
@@ -196,8 +199,8 @@ public class CartFragment extends Fragment {
     }
 
     private void sumPrice(){
-        int sumPrice = 0;
-        int savePrice = 0;
+        sumPrice = 0;
+        savePrice = 0;
         if (list.size()>0){
             for (CartBean bean : list) {
                 if (bean.isChecked()){
@@ -344,6 +347,16 @@ public class CartFragment extends Fragment {
         super.onDestroy();
         if (mReceiver!=null){
             getContext().unregisterReceiver(mReceiver);
+        }
+    }
+
+    @OnClick(R.id.tv_cart_buy)
+    public void onBuyClick(){
+        if (sumPrice>0){
+            startActivity(new Intent(getContext(),OrderActivity.class)
+            .putExtra(I.Cart.PAY_PRICE,sumPrice-savePrice));
+        }else{
+            CommonUtils.showLongToast(R.string.order_nothing);
         }
     }
 }
