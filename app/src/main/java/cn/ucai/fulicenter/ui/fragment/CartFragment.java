@@ -1,6 +1,10 @@
 package cn.ucai.fulicenter.ui.fragment;
 
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -22,6 +26,7 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import cn.ucai.fulicenter.R;
 import cn.ucai.fulicenter.application.FuLiCenterApplication;
+import cn.ucai.fulicenter.application.I;
 import cn.ucai.fulicenter.data.bean.CartBean;
 import cn.ucai.fulicenter.data.bean.GoodsDetailsBean;
 import cn.ucai.fulicenter.data.bean.MessageBean;
@@ -138,6 +143,8 @@ public class CartFragment extends Fragment {
 
     private void setListener() {
         setPullDownListener();
+        IntentFilter filter = new IntentFilter(I.BROADCAST_UPDATA_CART);
+        getContext().registerReceiver(mReceiver,filter);
     }
 
     private void setPullDownListener() {
@@ -292,5 +299,51 @@ public class CartFragment extends Fragment {
 
                     }
                 });
+    }
+
+    UpdateCartBroadcastReceiver mReceiver = new UpdateCartBroadcastReceiver();
+
+    class UpdateCartBroadcastReceiver extends BroadcastReceiver{
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            L.e(TAG,"UpdateCartBroadcastReceiver....");
+            GoodsDetailsBean bean = (GoodsDetailsBean) intent.getSerializableExtra(I.Cart.class.toString());
+            updateCart(bean);
+        }
+    }
+
+    private void updateCart(GoodsDetailsBean bean) {
+        boolean isHas = false;
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).getGoodsId()==bean.getGoodsId()){
+                list.get(i).setCount(list.get(i).getCount()+1);
+                adapter.notifyItemChanged(i);
+                sumPrice();
+                isHas = true;
+                return;
+            }
+
+        }
+        L.e(TAG,"updateCart,isHas="+isHas);
+        if (!isHas){
+            CartBean cart = new CartBean();
+            cart.setCount(1);
+            cart.setGoodsId(bean.getGoodsId());
+            cart.setChecked(true);
+            cart.setUserName(FuLiCenterApplication.getInstance().getCurrentUser().getMuserName());
+            cart.setGoods(bean);
+            list.add(cart);
+        }
+        adapter.notifyDataSetChanged();
+        sumPrice();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mReceiver!=null){
+            getContext().unregisterReceiver(mReceiver);
+        }
     }
 }
